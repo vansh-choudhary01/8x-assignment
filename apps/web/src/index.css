@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Surfaces */
+  --color-background: #f6f7fb;
+  --color-surface: #ffffff;
+  --color-surface-hover: #fbfbfd;
+
+  /* Text */
+  --color-ink: #0f172a;
+  --color-ink-muted: #64748b;
+  --color-ink-subtle: #94a3b8;
+
+  /* Borders */
+  --color-border: #e6e9f0;
+  --color-border-strong: #d6dbe6;
+
+  /* Accent (blue) */
+  --color-primary: #2660e3;
+  --color-primary-hover: #1f4fc4;
+  --color-primary-soft: #eef3ff;
+  --color-primary-soft-strong: #dfe9ff;
+
+  /* Sky (marketing surfaces: hero, auth) */
+  --color-sky: #eef7ff;
+  --color-sky-strong: #cfe7ff;
+  --color-sky-deep: #a9d4ff;
+
+  /* Status */
+  --color-success: #15803d;
+  --color-success-soft: #f0fdf4;
+  --color-warning: #b45309;
+  --color-warning-soft: #fffbeb;
+  --color-danger: #b91c1c;
+  --color-danger-soft: #fef2f2;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+#root {
+  width: 100%;
+}
+
+* {
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+@layer components {
+  /* Page-level text hierarchy */
+  .page-kicker {
+    @apply text-xs font-semibold uppercase tracking-wide text-primary;
+  }
+  .page-title {
+    @apply text-2xl font-semibold tracking-tight text-ink;
+  }
+  .page-lead {
+    @apply mt-1.5 max-w-2xl text-[14px] leading-relaxed text-ink-muted;
+  }
+
+  /* Surfaces */
+  .card {
+    @apply rounded-xl border border-border bg-surface shadow-[0_1px_2px_rgba(15,23,42,0.04)];
+  }
+  .card-hover {
+    @apply rounded-xl border border-border bg-surface shadow-[0_1px_2px_rgba(15,23,42,0.04)] transition-colors hover:border-primary/35 hover:bg-surface-hover;
+  }
+  .panel {
+    @apply rounded-xl border border-primary/15 bg-primary-soft;
+  }
+
+  /* Marketing surfaces */
+  .badge-pill {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-ink-muted shadow-[0_1px_2px_rgba(15,23,42,0.04)];
+  }
+
+  /* Focus ring, applied consistently to interactive elements */
+  .focus-ring {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:border-primary;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

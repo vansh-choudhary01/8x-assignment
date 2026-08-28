@@ -1,0 +1,19 @@
+{
+  "name": "naano",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=@naano/web",
+    "dev:api": "npm run dev --workspace=@naano/api",
+    "dev": "npm run dev:api & npm run dev:web",
+    "build": "npm run build --workspaces --if-present"
+  },
+  "devDependencies": {
+    "knip": "^6.32.3",
+    "madge": "^8.0.0"
+  }
+}
