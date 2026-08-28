@@ -3,14 +3,14 @@
   "private": true,
   "version": "0.1.0",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "dev:web": "npm run dev --workspace=@naano/web",
-    "dev:api": "npm run dev --workspace=@naano/api",
+    "dev:api": "npm run build --workspace=@naano/shared && npm run dev --workspace=@naano/api",
     "dev": "npm run dev:api & npm run dev:web",
-    "build": "npm run build --workspaces --if-present"
+    "build": "npm run build --workspace=@naano/shared && npm run build --workspace=@naano/api && npm run build --workspace=@naano/web"
   },
   "devDependencies": {
     "knip": "^6.32.3",
