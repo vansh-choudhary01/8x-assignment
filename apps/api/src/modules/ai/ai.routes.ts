@@ -3,6 +3,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { asyncHandler } from "../../common/asyncHandler.ts";
 import { parseBody } from "../../common/validate.ts";
+import { routeParam } from "../../common/routeParam.ts";
 import { requireAuth, requireSettledRole } from "../../middleware/auth.ts";
 import { hasOpenAI } from "../../infrastructure/ai/openai.ts";
 import {
@@ -59,7 +60,7 @@ aiRouter.post(
     );
     const result = await runTurn(actor(req), {
       message: input.message,
-      context: input.context ? { path: input.context.path, ...input.context } : undefined,
+      context: input.context,
     });
     res.json(result);
   }),
@@ -68,14 +69,14 @@ aiRouter.post(
 aiRouter.post(
   "/actions/:id/confirm",
   asyncHandler(async (req: Request, res: Response) => {
-    res.json({ action: await confirmAction(actor(req), req.params.id) });
+    res.json({ action: await confirmAction(actor(req), routeParam(req.params.id)) });
   }),
 );
 
 aiRouter.post(
   "/actions/:id/cancel",
   asyncHandler(async (req: Request, res: Response) => {
-    res.json({ action: await cancelAction(actor(req), req.params.id) });
+    res.json({ action: await cancelAction(actor(req), routeParam(req.params.id)) });
   }),
 );
 

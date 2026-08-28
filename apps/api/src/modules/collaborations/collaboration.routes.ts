@@ -4,6 +4,7 @@ import { COLLABORATION_STATUSES, FUNNEL_EVENT_TYPES } from "@naano/shared";
 import { z } from "zod";
 import { asyncHandler } from "../../common/asyncHandler.ts";
 import { parseBody } from "../../common/validate.ts";
+import { routeParam } from "../../common/routeParam.ts";
 import { requireAuth, requireSettledRole } from "../../middleware/auth.ts";
 import { recordEvent } from "../analytics/recordEvent.ts";
 import { TrackingLink } from "../analytics/trackingLink.model.ts";
@@ -31,7 +32,7 @@ collaborationRouter.get(
 collaborationRouter.get(
   "/:id",
   asyncHandler(async (req: Request, res: Response) => {
-    const item = await getCollaborationForUser(req.params.id, req.user!.id);
+    const item = await getCollaborationForUser(routeParam(req.params.id), req.user!.id);
     res.json({ collaboration: await serializeCollaboration(item) });
   }),
 );
@@ -48,7 +49,7 @@ collaborationRouter.post(
       }),
       req.body,
     );
-    const item = await transitionCollaboration(req.user!.id, req.user!.role!, req.params.id, input.status, {
+    const item = await transitionCollaboration(req.user!.id, req.user!.role!, routeParam(req.params.id), input.status, {
       contentUrl: input.contentUrl || undefined,
       contentNotes: input.contentNotes,
       publishedUrl: input.publishedUrl || undefined,
@@ -60,7 +61,7 @@ collaborationRouter.post(
 collaborationRouter.get(
   "/:id/messages",
   asyncHandler(async (req: Request, res: Response) => {
-    const messages = await listMessages(req.params.id, req.user!.id);
+    const messages = await listMessages(routeParam(req.params.id), req.user!.id);
     res.json({
       messages: messages.map((message) => ({
         id: String(message._id),
@@ -76,7 +77,7 @@ collaborationRouter.post(
   "/:id/messages",
   asyncHandler(async (req: Request, res: Response) => {
     const input = parseBody(z.object({ body: z.string().trim().min(1).max(8000) }), req.body);
-    const message = await sendMessage(req.params.id, req.user!.id, input.body);
+    const message = await sendMessage(routeParam(req.params.id), req.user!.id, input.body);
     res.status(201).json({
       message: {
         id: String(message._id),
@@ -99,7 +100,7 @@ collaborationRouter.post(
       }),
       req.body,
     );
-    const collaboration = await getCollaborationForUser(req.params.id, req.user!.id);
+    const collaboration = await getCollaborationForUser(routeParam(req.params.id), req.user!.id);
     if (req.user!.role !== "BRAND") {
       res.status(403).json({ error: { code: "FORBIDDEN", message: "Only the brand can record funnel events" } });
       return;

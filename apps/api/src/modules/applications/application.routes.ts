@@ -3,6 +3,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { asyncHandler } from "../../common/asyncHandler.ts";
 import { parseBody } from "../../common/validate.ts";
+import { routeParam } from "../../common/routeParam.ts";
 import { requireAuth, requireRole, requireSettledRole } from "../../middleware/auth.ts";
 import {
   acceptApplication,
@@ -33,7 +34,7 @@ applicationRouter.get(
   requireRole("BRAND"),
   asyncHandler(async (req: Request, res: Response) => {
     res.json({
-      applications: await listApplicationsForCampaign(req.user!.id, req.params.campaignId),
+      applications: await listApplicationsForCampaign(req.user!.id, routeParam(req.params.campaignId)),
     });
   }),
 );
@@ -43,7 +44,7 @@ applicationRouter.post(
   requireRole("CREATOR"),
   asyncHandler(async (req: Request, res: Response) => {
     const input = parseBody(applySchema, req.body);
-    const application = await applyToCampaign(req.user!.id, req.params.campaignId, input.pitch);
+    const application = await applyToCampaign(req.user!.id, routeParam(req.params.campaignId), input.pitch);
     res.status(201).json({ application: serializeApplication(application) });
   }),
 );
@@ -53,7 +54,7 @@ applicationRouter.post(
   requireRole("BRAND"),
   asyncHandler(async (req: Request, res: Response) => {
     const input = parseBody(z.object({ creatorUserId: z.string().min(1) }), req.body);
-    const result = await inviteCreator(req.user!.id, req.params.campaignId, input.creatorUserId);
+    const result = await inviteCreator(req.user!.id, routeParam(req.params.campaignId), input.creatorUserId);
     res.status(201).json({
       application: serializeApplication(result.application),
       collaboration: result.collaboration
@@ -67,7 +68,7 @@ applicationRouter.post(
   "/:id/accept-invite",
   requireRole("CREATOR"),
   asyncHandler(async (req: Request, res: Response) => {
-    const result = await acceptInvite(req.user!.id, req.params.id);
+    const result = await acceptInvite(req.user!.id, routeParam(req.params.id));
     res.json({
       application: serializeApplication(result.application),
       collaboration: await serializeCollaboration(result.collaboration),
@@ -79,7 +80,7 @@ applicationRouter.post(
   "/:id/accept",
   requireRole("BRAND"),
   asyncHandler(async (req: Request, res: Response) => {
-    const result = await acceptApplication(req.user!.id, req.params.id);
+    const result = await acceptApplication(req.user!.id, routeParam(req.params.id));
     res.json({
       application: serializeApplication(result.application),
       collaboration: await serializeCollaboration(result.collaboration),
@@ -91,7 +92,7 @@ applicationRouter.post(
   "/:id/reject",
   requireRole("BRAND"),
   asyncHandler(async (req: Request, res: Response) => {
-    const application = await rejectApplication(req.user!.id, req.params.id);
+    const application = await rejectApplication(req.user!.id, routeParam(req.params.id));
     res.json({ application: serializeApplication(application) });
   }),
 );

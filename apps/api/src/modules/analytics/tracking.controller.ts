@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { recordEvent } from "./recordEvent.ts";
+import { routeParam } from "../../common/routeParam.ts";
 import { TrackingLink } from "./trackingLink.model.ts";
 
 const PIXEL_GIF = Buffer.from(
@@ -34,7 +35,7 @@ async function recordClick(
 }
 
 export async function trackingRedirect(req: Request, res: Response) {
-  const link = await loadLink(req.params.token);
+  const link = await loadLink(routeParam(req.params.token));
   if (!link) {
     res.status(404).send("Unknown tracking link");
     return;
@@ -44,7 +45,7 @@ export async function trackingRedirect(req: Request, res: Response) {
 }
 
 export async function trackingPixel(req: Request, res: Response) {
-  const link = await loadLink(req.params.token);
+  const link = await loadLink(routeParam(req.params.token));
   if (!link) {
     res.status(404).end();
     return;

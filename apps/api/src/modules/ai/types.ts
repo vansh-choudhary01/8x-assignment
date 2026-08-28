@@ -22,6 +22,7 @@ export type ToolArgs = {
   pitch?: string;
   body?: string;
   linkedInUrl?: string;
+  xUrl?: string;
   headline?: string;
   bio?: string;
   positioning?: string;

@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { Router } from "express";
 import { asyncHandler } from "../../common/asyncHandler.ts";
 import { parseBody } from "../../common/validate.ts";
+import { routeParam } from "../../common/routeParam.ts";
 import { requireAuth, requireRole, requireSettledRole } from "../../middleware/auth.ts";
 import {
   brandName,
@@ -46,7 +47,7 @@ campaignRouter.post(
 campaignRouter.get(
   "/:id",
   asyncHandler(async (req: Request, res: Response) => {
-    const campaign = await viewCampaign(req.params.id, req.user!.id);
+    const campaign = await viewCampaign(routeParam(req.params.id), req.user!.id);
     const name = await brandName(String(campaign.brandUserId));
     res.json({ campaign: serializeCampaign(campaign, name) });
   }),
@@ -56,7 +57,7 @@ campaignRouter.get(
   "/:id/matches",
   requireRole("BRAND"),
   asyncHandler(async (req: Request, res: Response) => {
-    const campaign = await getCampaign(req.params.id);
+    const campaign = await getCampaign(routeParam(req.params.id));
     if (String(campaign.brandUserId) !== req.user!.id) {
       res.status(403).json({ error: { code: "FORBIDDEN", message: "Not your campaign" } });
       return;

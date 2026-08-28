@@ -13,4 +13,4 @@ export const ingestionQueue = new Queue("ingestion", {
 
 export type IngestionJob =
   | { kind: "WEBSITE"; brandProfileId: string; url: string }
-  | { kind: "CREATOR_PROFILE"; creatorProfileId: string; linkedInUrl: string };
+  | { kind: "CREATOR_PROFILE"; creatorProfileId: string; linkedInUrl: string; xUrl?: string };
